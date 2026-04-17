@@ -1,0 +1,31 @@
+name: "GitIgnite"
+descripction: "Fuel your Github profile with animated streak stats and gamified intensity levels"
+author: "Edmendez-dev"
+
+branding:
+  icon: "activity"
+  color: "orange"
+
+inputs:
+  gh_token:
+    description: "Github Personal Access Token (PAT) with repo and workflow scopes."
+    required: true
+  user_name:
+    description: "Github username to fetch statistics for."
+    required: true
+  theme:
+    description: "The visual theme for the SVG output (e.g., classic, neon, obsidian, emerald)."
+    required: false
+    default: "classic"
+  show_levels:
+    description: "Whether to display the intensity levels (Level 1, 2, 3)."
+    required: false
+    default: "true"
+  output_path:
+    description: "The directory where the generated SVGs will be saved."
+    required: false
+    default: "stats"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"

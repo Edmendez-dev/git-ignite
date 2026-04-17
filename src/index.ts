@@ -4,7 +4,7 @@ import { fetchUserStats } from "./engine/github";
 async function run() {
   try {
     const token = core.getInput("gh_token", { required: true });
-    const username = core.getInput("username", { required: true });
+    const username = core.getInput("user_name", { required: true });
     const theme = core.getInput("theme") || "classic";
 
     core.info(`Starting GitIgnite for user: ${username} with theme: ${theme}`);
