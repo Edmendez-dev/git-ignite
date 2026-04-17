@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import { fetchUserStats } from "./engine/github";
+import { calculateStreak } from "./engine/calculator";
 
 async function run() {
   try {
@@ -13,6 +14,13 @@ async function run() {
     core.info(
       `Successfully fetched ${calendarData.totalContributions} contributions!`,
     );
+
+    const streakStats = calculateStreak(calendarData);
+    core.info(`Current streak: ${streakStats.currentStreak}`);
+    core.info(`Today's points: ${streakStats.todayPoints}`);
+    core.info(`Level: ${streakStats.level}`);
+    core.setOutput("streak", streakStats.currentStreak.toString());
+    core.setOutput("level", streakStats.level.toString());
 
     // TODO: Generate SVG based on fetched data
     core.info("Generating animated SVG...");
