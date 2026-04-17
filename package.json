@@ -1,0 +1,34 @@
+{
+  "name": "git-ignite",
+  "version": "1.0.0",
+  "description": "Dynamic and animated Github streak stats with intensity levels",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/index.ts -o dist --source-map --license ncc.LICENSE",
+    "format": "prettier --write '**/*.ts'",
+    "lint": "eslint src/**/*.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Edmendez-dev/git-ignite.git"
+  },
+  "keywords": [
+    "github-action",
+    "streak",
+    "stats",
+    "gamification",
+    "svg-animation"
+  ],
+  "author": "Eduardo Méndez",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^3.0.0",
+    "@actions/github": "^9.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@vercel/ncc": "^0.38.4",
+    "typescript": "^6.0.3"
+  }
+}
