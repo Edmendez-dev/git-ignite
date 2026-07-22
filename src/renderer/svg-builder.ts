@@ -1,39 +1,92 @@
 import { StreakStats } from "../engine/types";
+import { FLAME_FRAMES } from "./flame-frames";
 
 export function generateSVG(stats: StreakStats): string {
   const { currentStreak, level } = stats;
 
-  const theme = {
-    flameColor: level === 3 ? "#FF4500" : level === 2 ? "#FFA500" : "#717171",
-    animationName:
-      level === 3 ? "beast-glow" : level === 2 ? "steady-burn" : "none",
-    opacity: level === 0 ? "0.3" : "1",
-  };
+  let animDuration = "1.6s";
+  let containerFilter = "drop-shadow(0 0 6px #fe4b20)";
+  let containerOpacity = "1";
+  let glowAnimation = "none";
+
+  if (level >= 3) {
+    animDuration = "0.8s";
+    containerFilter = "drop-shadow(0 0 12px #ff4500) drop-shadow(0 0 25px #ff0000)";
+    glowAnimation = "beast-glow 1.5s infinite ease-in-out";
+  } else if (level === 2) {
+    animDuration = "1.2s";
+    containerFilter = "drop-shadow(0 0 10px #ffa500)";
+    glowAnimation = "steady-burn 2s infinite ease-in-out";
+  } else if (level === 0) {
+    animDuration = "2.4s";
+    containerFilter = "grayscale(100%)";
+    containerOpacity = "0.3";
+  }
+
+  const durationSec = parseFloat(animDuration);
+  const stepTime = durationSec / 16;
+  const scale = 2.7;
+  const centerX = 247.5;
+  const bottomY = 138;
+
+  const frameElements = FLAME_FRAMES.map((f) => {
+    const width = (f.vw * scale).toFixed(2);
+    const height = (f.vh * scale).toFixed(2);
+    const x = (centerX - (f.vw * scale) / 2).toFixed(2);
+    const y = (bottomY - f.vh * scale).toFixed(2);
+
+    return `
+      <g class="flame-frame frame-${f.id}">
+        <svg viewBox="${f.viewBox}" width="${width}" height="${height}" x="${x}" y="${y}">
+          ${f.content}
+        </svg>
+      </g>`;
+  }).join("");
+
+  const cssDelays = FLAME_FRAMES.map((f, index) => {
+    const delay = (index * stepTime).toFixed(3);
+    return `        .frame-${f.id} { animation-delay: ${delay}s; }`;
+  }).join("\n");
 
   return `
-    <svg width="495" height="195" viewBox="0 0 495 195" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="495" height="195" viewBox="0 0 495 195" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <style>
         .streak-text { font: bold 35px 'Segoe UI', Ubuntu, Sans-Serif; fill: #FFFFFF; }
         .label-text { font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8B949E; }
-        .flame { 
-          fill: ${theme.flameColor}; 
-          opacity: ${theme.opacity};
-          animation: ${theme.animationName} 2s infinite ease-in-out; 
-        }
         
+        .flame-container {
+          filter: ${containerFilter};
+          opacity: ${containerOpacity};
+          animation: ${glowAnimation};
+        }
+
+        .flame-frame {
+          opacity: 0;
+          animation: flame-cycle ${animDuration} infinite steps(1);
+        }
+
+${cssDelays}
+
+        @keyframes flame-cycle {
+          0%, 6.25% { opacity: 1; }
+          6.251%, 100% { opacity: 0; }
+        }
+
         @keyframes beast-glow {
-          0%, 100% { filter: drop-shadow(0 0 5px #FF4500); transform: scale(1); }
-          50% { filter: drop-shadow(0 0 20px #FF0000); transform: scale(1.05); }
+          0%, 100% { filter: drop-shadow(0 0 8px #ff4500) drop-shadow(0 0 15px #ff0000); transform-origin: 247.5px 138px; }
+          50% { filter: drop-shadow(0 0 18px #ff4500) drop-shadow(0 0 35px #ff0000); transform-origin: 247.5px 138px; }
         }
         @keyframes steady-burn {
-          0%, 100% { opacity: 0.8; }
-          50% { opacity: 1; }
+          0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 8px #ffa500); }
+          50% { opacity: 1; filter: drop-shadow(0 0 15px #ff7b00); }
         }
       </style>
 
       <rect width="495" height="195" rx="10" fill="#0D1117" />
       
-      <path class="flame" d="M247.5 40C247.5 40 210 90 210 120C210 140.711 226.789 157.5 247.5 157.5C268.211 157.5 285 140.711 285 120C285 90 247.5 40 247.5 40Z" />
+      <g class="flame-container">
+${frameElements}
+      </g>
 
       <text x="30" y="160" class="streak-text">${currentStreak} Day Streak</text>
       <text x="30" y="180" class="label-text">GITIGNITE ENGINE • LEVEL ${level}</text>
