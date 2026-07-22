@@ -6,6 +6,30 @@ export interface FlameFrame {
   content: string;
 }
 
+export interface FlameTierColors {
+  base: string;
+  middle: string;
+  core: string;
+}
+
+export const FLAME_TIER_COLORS: Record<number, FlameTierColors> = {
+  1: {
+    base: "#fe4b20",
+    middle: "#ffa034ff",
+    core: "#ffdd58ff",
+  },
+  2: {
+    base: "#66c2ffff",
+    middle: "#7dfefeff",
+    core: "#ffffffff",
+  },
+  3: {
+    base: "#a142fdff",
+    middle: "#fd35ffff",
+    core: "#ffffffff",
+  },
+};
+
 export const FLAME_FRAMES: FlameFrame[] = [
   {
     id: 1,

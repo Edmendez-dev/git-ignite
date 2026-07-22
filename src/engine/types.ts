@@ -3,6 +3,7 @@ export interface ContributionDay {
   contributionCount: number;
   date: string;
   color: string;
+  tier: "ignition" | "short-circuit" | "overload";
 }
 
 export interface ContributionCalendar {
@@ -15,6 +16,7 @@ export interface ContributionCalendar {
 export interface StreakStats {
   currentStreak: number;
   todayPoints: number;
+  tier: "ignition" | "short-circuit" | "overload";
   /**
    * Calculated intensity level (0 to 3)
    * 0: Inactive (0 contributions)

@@ -1,21 +1,29 @@
 import { StreakStats } from "../engine/types";
-import { FLAME_FRAMES } from "./flame-frames";
+import { FLAME_FRAMES, FLAME_TIER_COLORS } from "./flame-frames";
 
 export function generateSVG(stats: StreakStats): string {
-  const { currentStreak, level } = stats;
+  const { currentStreak, level, tier } = stats;
+  const tierMap: Record<StreakStats["tier"], 1 | 2 | 3> = {
+    ignition: 1,
+    "short-circuit": 2,
+    overload: 3,
+  };
+  const tierNum = tierMap[tier];
+
+  const tierColors = FLAME_TIER_COLORS[tierNum];
 
   let animDuration = "1.6s";
-  let containerFilter = "drop-shadow(0 0 6px #fe4b20)";
+  let containerFilter = `drop-shadow(0 0 6px ${tierColors.base})`;
   let containerOpacity = "1";
   let glowAnimation = "none";
 
   if (level >= 3) {
     animDuration = "0.8s";
-    containerFilter = "drop-shadow(0 0 12px #ff4500) drop-shadow(0 0 25px #ff0000)";
+    containerFilter = `drop-shadow(0 0 12px ${tierColors.base}) drop-shadow(0 0 25px ${tierColors.middle})`;
     glowAnimation = "beast-glow 1.5s infinite ease-in-out";
   } else if (level === 2) {
     animDuration = "1.2s";
-    containerFilter = "drop-shadow(0 0 10px #ffa500)";
+    containerFilter = `drop-shadow(0 0 10px ${tierColors.base})`;
     glowAnimation = "steady-burn 2s infinite ease-in-out";
   } else if (level === 0) {
     animDuration = "2.4s";
@@ -35,10 +43,15 @@ export function generateSVG(stats: StreakStats): string {
     const x = (centerX - (f.vw * scale) / 2).toFixed(2);
     const y = (bottomY - f.vh * scale).toFixed(2);
 
+    const content = f.content
+      .replaceAll("#fe4b20", tierColors.base)
+      .replaceAll("#ffa034", tierColors.middle)
+      .replaceAll("#ffdd58", tierColors.core);
+
     return `
       <g class="flame-frame frame-${f.id}">
         <svg viewBox="${f.viewBox}" width="${width}" height="${height}" x="${x}" y="${y}">
-          ${f.content}
+          ${content}
         </svg>
       </g>`;
   }).join("");
@@ -73,12 +86,12 @@ ${cssDelays}
         }
 
         @keyframes beast-glow {
-          0%, 100% { filter: drop-shadow(0 0 8px #ff4500) drop-shadow(0 0 15px #ff0000); transform-origin: 247.5px 138px; }
-          50% { filter: drop-shadow(0 0 18px #ff4500) drop-shadow(0 0 35px #ff0000); transform-origin: 247.5px 138px; }
+          0%, 100% { filter: drop-shadow(0 0 8px ${tierColors.base}) drop-shadow(0 0 15px ${tierColors.middle}); transform-origin: 247.5px 138px; }
+          50% { filter: drop-shadow(0 0 18px ${tierColors.base}) drop-shadow(0 0 35px ${tierColors.middle}); transform-origin: 247.5px 138px; }
         }
         @keyframes steady-burn {
-          0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 8px #ffa500); }
-          50% { opacity: 1; filter: drop-shadow(0 0 15px #ff7b00); }
+          0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 8px ${tierColors.base}); }
+          50% { opacity: 1; filter: drop-shadow(0 0 15px ${tierColors.middle}); }
         }
       </style>
 

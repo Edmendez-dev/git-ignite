@@ -5,6 +5,7 @@ const mockStats = {
   currentStreak: 15,
   todayPoints: 12,
   level: 3,
+  tier: "ignition" as const,
 };
 
 const svg = generateSVG(mockStats);
