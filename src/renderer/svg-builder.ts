@@ -1,8 +1,28 @@
 import { StreakStats } from "../engine/types";
 import { FLAME_FRAMES, FLAME_TIER_COLORS } from "./flame-frames";
 
+function formatStartDate(iso: string | null): string {
+  if (!iso) return "—";
+  const [year, month, day] = iso.split("-").map(Number);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  return `${months[month - 1]} ${String(day).padStart(2, "0")}, ${year}`;
+}
+
 export function generateSVG(stats: StreakStats): string {
-  const { currentStreak, level, tier } = stats;
+  const { currentStreak, level, tier, totalContributions, startDate } = stats;
   const tierMap: Record<StreakStats["tier"], 1 | 2 | 3> = {
     ignition: 1,
     "short-circuit": 2,
@@ -66,6 +86,8 @@ export function generateSVG(stats: StreakStats): string {
       <style>
         .streak-text { font: bold 35px 'Segoe UI', Ubuntu, Sans-Serif; fill: #FFFFFF; }
         .label-text { font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8B949E; }
+        .stat-value { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #E6EDF3; text-anchor: end; }
+        .stat-label { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #484F58; text-anchor: end; letter-spacing: 0.04em; }
         
         .flame-container {
           filter: ${containerFilter};
@@ -103,6 +125,10 @@ ${frameElements}
 
       <text x="30" y="160" class="streak-text">${currentStreak} Day Streak</text>
       <text x="30" y="180" class="label-text">GITIGNITE ENGINE • LEVEL ${level}</text>
+
+      <!-- Top-right stats block -->
+      <text x="465" y="30" class="stat-value">${totalContributions.toLocaleString()} Contributions</text>
+      <text x="465" y="45" class="stat-label">${formatStartDate(startDate)} — Present</text>
     </svg>
     `;
 }

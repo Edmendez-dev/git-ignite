@@ -46,5 +46,24 @@ export function calculateStreak(calendar: ContributionCalendar): StreakStats {
     tier = "short-circuit";
   }
 
-  return { currentStreak, todayPoints, level, tier };
+  // Total contributions up to today
+  const totalContributions = allDays
+    .filter((d) => d.date <= todayDateStr)
+    .reduce((sum, d) => sum + d.contributionCount, 0);
+
+  // Earliest day with at least one contribution
+  const daysWithContribs = allDays
+    .filter((d) => d.contributionCount > 0)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const startDate =
+    daysWithContribs.length > 0 ? daysWithContribs[0].date : null;
+
+  return {
+    currentStreak,
+    todayPoints,
+    level,
+    tier,
+    totalContributions,
+    startDate,
+  };
 }

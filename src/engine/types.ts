@@ -21,8 +21,12 @@ export interface StreakStats {
    * Calculated intensity level (0 to 3)
    * 0: Inactive (0 contributions)
    * 1: Spark (1-4 commits)
-   * 2: Stedy (5-9 commits)
+   * 2: Steady (5-9 commits)
    * 3: Best Mode (10+ commits)
    */
   level: number;
+  /** Total contributions accumulated up to today */
+  totalContributions: number;
+  /** ISO date string (YYYY-MM-DD) of the first ever contribution */
+  startDate: string | null;
 }

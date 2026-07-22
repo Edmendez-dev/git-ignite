@@ -6,6 +6,8 @@ const mockStats = {
   todayPoints: 12,
   level: 3,
   tier: "ignition" as const,
+  totalContributions: 150,
+  startDate: "2023-01-01",
 };
 
 const svg = generateSVG(mockStats);
