@@ -29,6 +29,7 @@ async function run() {
     // Generate SVG
     const svg = generateSVG(streakStats);
     core.setOutput("svg", svg);
+
     const dir = path.join(process.cwd(), outputPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
