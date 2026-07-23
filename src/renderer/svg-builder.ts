@@ -124,7 +124,7 @@ ${frameElements}
       </g>
 
       <text x="30" y="160" class="streak-text">${currentStreak} Day Streak</text>
-      <text x="30" y="180" class="label-text">GITIGNITE ENGINE • LEVEL ${level}</text>
+      <text x="30" y="180" class="label-text">GITIGNITE • LEVEL ${level}</text>
 
       <!-- Top-right stats block -->
       <text x="465" y="30" class="stat-value">${totalContributions.toLocaleString()} Contributions</text>

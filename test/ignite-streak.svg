@@ -136,10 +136,10 @@
       </g>
 
       <text x="30" y="160" class="streak-text">15 Day Streak</text>
-      <text x="30" y="180" class="label-text">GITIGNITE ENGINE • LEVEL 3</text>
+      <text x="30" y="180" class="label-text">GITIGNITE • LEVEL 3</text>
 
       <!-- Top-right stats block -->
       <text x="465" y="30" class="stat-value">150 Contributions</text>
-      <text x="465" y="45" class="stat-label">Jan 01, 2023 — present</text>
+      <text x="465" y="45" class="stat-label">Jan 01, 2023 — Present</text>
     </svg>
     

@@ -30,3 +30,23 @@ export interface StreakStats {
   /** ISO date string (YYYY-MM-DD) of the first ever contribution */
   startDate: string | null;
 }
+
+// Languages
+
+export interface LanguageEntry {
+  /** Language display name (e.g. "TypeScript") */
+  name: string;
+  /** Approximate byte count across all repos */
+  bytes: number;
+  /** GitHub-provided color hex string (e.g. "#3178c6") */
+  color: string;
+  /** Percentage share of total bytes, 0-100 */
+  percentage: number;
+}
+
+export interface LanguageStats {
+  /** Top languages sorted descending by byte count */
+  languages: LanguageEntry[];
+  /** GitHub username */
+  username: string;
+}
