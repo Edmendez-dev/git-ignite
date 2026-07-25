@@ -1,5 +1,5 @@
 name: "GitIgnite"
-descripction: "Fuel your Github profile with animated streak stats and gamified intensity levels"
+description: "Fuel your Github profile with animated streak stats and gamified intensity levels"
 author: "Edmendez-dev"
 
 branding:
@@ -25,6 +25,12 @@ inputs:
     description: "The directory where the generated SVGs will be saved."
     required: false
     default: "stats"
+
+outputs:
+  streak:
+    description: "Current active streak in days"
+  level:
+    description: "Calculated effort level (Level 0 to Level 3)"
 
 runs:
   using: "node20"

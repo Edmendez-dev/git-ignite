@@ -1,10 +1,4 @@
-import { ContributionCalendar, ContributionDay } from "./types";
-
-export interface StreakStats {
-  currentStreak: number;
-  todayPoints: number;
-  level: number;
-}
+import { ContributionCalendar, ContributionDay, StreakStats } from "./types";
 
 export function calculateStreak(calendar: ContributionCalendar): StreakStats {
   const allDays: ContributionDay[] = calendar.weeks
@@ -12,6 +6,7 @@ export function calculateStreak(calendar: ContributionCalendar): StreakStats {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   let currentStreak = 0;
+  let tier: "ignition" | "short-circuit" | "overload" = "ignition";
   const todayDateStr = new Date().toISOString().split("T")[0];
 
   // Streak logic with "Grace Day"
@@ -44,5 +39,31 @@ export function calculateStreak(calendar: ContributionCalendar): StreakStats {
     level = 1; // Spark
   else level = 0; // No contributions or Inactive
 
-  return { currentStreak, todayPoints, level };
+  // Tier Logic
+  if (currentStreak > 90) {
+    tier = "overload";
+  } else if (currentStreak >= 30) {
+    tier = "short-circuit";
+  }
+
+  // Total contributions up to today
+  const totalContributions = allDays
+    .filter((d) => d.date <= todayDateStr)
+    .reduce((sum, d) => sum + d.contributionCount, 0);
+
+  // Earliest day with at least one contribution
+  const daysWithContribs = allDays
+    .filter((d) => d.contributionCount > 0)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const startDate =
+    daysWithContribs.length > 0 ? daysWithContribs[0].date : null;
+
+  return {
+    currentStreak,
+    todayPoints,
+    level,
+    tier,
+    totalContributions,
+    startDate,
+  };
 }
