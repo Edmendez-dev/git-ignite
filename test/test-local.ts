@@ -1,4 +1,4 @@
-import { generateSVG } from "../src/renderer/svg-builder";
+import { generateSVG } from "../src/renderer/streak-builder";
 import { generateLanguagesSVG } from "../src/renderer/languages-builder";
 import * as fs from "fs";
 

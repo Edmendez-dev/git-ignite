@@ -3,6 +3,8 @@
       <style>
         .streak-text { font: bold 35px 'Segoe UI', Ubuntu, Sans-Serif; fill: #FFFFFF; }
         .label-text { font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8B949E; }
+        .stat-value { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #E6EDF3; text-anchor: end; }
+        .stat-label { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #484F58; text-anchor: end; letter-spacing: 0.04em; }
         
         .flame-container {
           filter: drop-shadow(0 0 12px #fe4b20) drop-shadow(0 0 25px #ffa034ff);
@@ -134,6 +136,10 @@
       </g>
 
       <text x="30" y="160" class="streak-text">15 Day Streak</text>
-      <text x="30" y="180" class="label-text">GITIGNITE ENGINE • LEVEL 3</text>
+      <text x="30" y="180" class="label-text">GITIGNITE • LEVEL 3</text>
+
+      <!-- Top-right stats block -->
+      <text x="465" y="30" class="stat-value">150 Contributions</text>
+      <text x="465" y="45" class="stat-label">Jan 01, 2023 — Present</text>
     </svg>
     

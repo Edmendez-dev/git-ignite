@@ -4,7 +4,7 @@ import * as path from "path";
 import { fetchUserStats } from "./engine/github";
 import { fetchLanguageStats } from "./engine/languages";
 import { calculateStreak } from "./engine/calculator";
-import { generateSVG } from "./renderer/svg-builder";
+import { generateSVG } from "./renderer/streak-builder";
 import { generateLanguagesSVG } from "./renderer/languages-builder";
 
 async function run() {
