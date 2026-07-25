@@ -10,3 +10,6 @@
 
 # Dist
 /dist
+
+#Test SVG
+/test/*.svg

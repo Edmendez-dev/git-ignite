@@ -1,5 +1,6 @@
 import { getOctokit } from "@actions/github";
 import { LanguageEntry, LanguageStats } from "./types";
+import languageColors from "../data/language-colors.json";
 
 const FETCH_LANGUAGES_QUERY = `
 query($login: String!, $cursor: String) {
@@ -54,6 +55,7 @@ export async function fetchLanguageStats(
   topN = 8,
 ): Promise<LanguageStats> {
   const octokit = getOctokit(token);
+  const colorMap = languageColors as Record<string, string>;
   const byteMap = new Map<string, { bytes: number; color: string }>();
 
   let cursor: string | null = null;
@@ -74,7 +76,7 @@ export async function fetchLanguageStats(
         const prev = byteMap.get(name);
         byteMap.set(name, {
           bytes: (prev?.bytes ?? 0) + edge.size,
-          color: prev?.color ?? color ?? "#6e7681",
+          color: prev?.color ?? color ?? colorMap[name] ?? "#6e7681",
         });
       }
     }
