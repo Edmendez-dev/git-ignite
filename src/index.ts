@@ -6,17 +6,25 @@ import { fetchLanguageStats } from "./engine/languages";
 import { calculateStreak } from "./engine/calculator";
 import { generateSVG } from "./renderer/streak-builder";
 import { generateLanguagesSVG } from "./renderer/languages-builder";
+import { getTheme, THEMES } from "./renderer/themes";
 
 async function run() {
   try {
     const token = core.getInput("gh_token", { required: true });
     const username = core.getInput("user_name", { required: true });
-    const theme = core.getInput("theme") || "classic";
+    const themeName = core.getInput("theme") || "classic";
     const outputPath = core.getInput("output_path") || "stats";
 
-    core.info(`Starting GitIgnite for user: ${username} with theme: ${theme}`);
+    if (!(themeName in THEMES)) {
+      core.warning(
+        `Theme "${themeName}" not found. Falling back to "classic". Available themes: ${Object.keys(THEMES).join(", ")}.`,
+      );
+    }
+    const theme = getTheme(themeName);
+    core.info(
+      `Starting GitIgnite for user: ${username} with theme: ${theme.name}`,
+    );
 
-    // Fetch both data sources in parallel
     const [calendarData, languageStats] = await Promise.all([
       fetchUserStats(username, token),
       fetchLanguageStats(username, token),
@@ -35,9 +43,9 @@ async function run() {
     core.info(`Today's points: ${streakStats.todayPoints}`);
     core.info(`Level: ${streakStats.level}`);
 
-    // Generate both SVGs
-    const streakSvg = generateSVG(streakStats);
-    const languagesSvg = generateLanguagesSVG(languageStats);
+    // Generate SVGs
+    const streakSvg = generateSVG(streakStats, theme);
+    const languagesSvg = generateLanguagesSVG(languageStats, theme);
 
     // Expose outputs
     core.setOutput("streak", streakStats.currentStreak.toString());

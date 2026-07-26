@@ -12,4 +12,5 @@
 /dist
 
 #Test SVG
-/test/*.svg
+/test/ignite-languages.svg
+/test/ignite-streak.svg

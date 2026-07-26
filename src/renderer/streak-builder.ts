@@ -1,4 +1,4 @@
-import { StreakStats } from "../engine/types";
+import { StreakStats, Theme } from "../engine/types";
 import { FLAME_FRAMES, FLAME_TIER_COLORS } from "./flame-frames";
 
 function formatStartDate(iso: string | null): string {
@@ -21,7 +21,7 @@ function formatStartDate(iso: string | null): string {
   return `${months[month - 1]} ${String(day).padStart(2, "0")}, ${year}`;
 }
 
-export function generateSVG(stats: StreakStats): string {
+export function generateSVG(stats: StreakStats, theme: Theme): string {
   const { currentStreak, level, tier, totalContributions, startDate } = stats;
   const tierMap: Record<StreakStats["tier"], 1 | 2 | 3> = {
     ignition: 1,
@@ -84,10 +84,10 @@ export function generateSVG(stats: StreakStats): string {
   return `
     <svg width="495" height="195" viewBox="0 0 495 195" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <style>
-        .streak-text { font: bold 35px 'Segoe UI', Ubuntu, Sans-Serif; fill: #FFFFFF; }
-        .label-text { font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8B949E; }
-        .stat-value { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #E6EDF3; text-anchor: end; }
-        .stat-label { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #484F58; text-anchor: end; letter-spacing: 0.04em; }
+        .streak-text { font: bold 35px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${theme.textAccent}; }
+        .label-text { font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${theme.textSecondary}; }
+        .stat-value { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${theme.textPrimary}; text-anchor: end; }
+        .stat-label { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: ${theme.textMuted}; text-anchor: end; letter-spacing: 0.04em; }
         
         .flame-container {
           filter: ${containerFilter};
@@ -117,7 +117,7 @@ ${cssDelays}
         }
       </style>
 
-      <rect width="495" height="195" rx="10" fill="#0D1117" />
+      <rect width="495" height="195" rx="10" fill="${theme.background}" />
       
       <g class="flame-container">
 ${frameElements}

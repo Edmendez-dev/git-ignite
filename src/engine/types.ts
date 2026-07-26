@@ -32,7 +32,6 @@ export interface StreakStats {
 }
 
 // Languages
-
 export interface LanguageEntry {
   /** Language display name (e.g. "TypeScript") */
   name: string;
@@ -49,4 +48,28 @@ export interface LanguageStats {
   languages: LanguageEntry[];
   /** GitHub username */
   username: string;
+}
+
+// Themes
+export interface Theme {
+  /** Theme identifier, e.g. "classic" */
+  name: string;
+  /** Card background */
+  background: string;
+  /** Secondary panel bg: bar tracks, chip pills, donut track */
+  surface: string;
+  /** Separator lines / borders */
+  border: string;
+  /** High-emphasis accent text: streak number, bar-label */
+  textAccent: string;
+  /** Primary value text: username, stat values, donut center name */
+  textPrimary: string;
+  /** Secondary text: section titles, streak label */
+  textSecondary: string;
+  /** Muted text: stat labels, donut sub-label, empty state */
+  textMuted: string;
+  /** Subtle small text: percentages (pct-label, chip-pct) */
+  textSubtle: string;
+  /** Body text on chips */
+  textBody: string;
 }
