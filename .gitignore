@@ -11,6 +11,5 @@
 # Dist
 /dist
 
-#Test SVG
-/test/ignite-languages.svg
-/test/ignite-streak.svg
+# Test SVG output
+test/*.svg

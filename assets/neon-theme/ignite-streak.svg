@@ -1,10 +1,10 @@
 
     <svg width="495" height="195" viewBox="0 0 495 195" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <style>
-        .streak-text { font: bold 35px 'Segoe UI', Ubuntu, Sans-Serif; fill: #FFFFFF; }
-        .label-text { font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8B949E; }
-        .stat-value { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #E6EDF3; text-anchor: end; }
-        .stat-label { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #484F58; text-anchor: end; letter-spacing: 0.04em; }
+        .streak-text { font: bold 35px 'Segoe UI', Ubuntu, Sans-Serif; fill: #00F5FF; }
+        .label-text { font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #B084F5; }
+        .stat-value { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #FF2ECC; text-anchor: end; }
+        .stat-label { font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #6B5A9E; text-anchor: end; letter-spacing: 0.04em; }
         
         .flame-container {
           filter: drop-shadow(0 0 12px #fe4b20) drop-shadow(0 0 25px #ffa034ff);
@@ -49,7 +49,7 @@
         }
       </style>
 
-      <rect width="495" height="195" rx="10" fill="#0D1117" />
+      <rect width="495" height="195" rx="10" fill="#0A0014" />
       
       <g class="flame-container">
 
