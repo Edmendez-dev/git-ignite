@@ -210,7 +210,7 @@ export function generateLanguagesSVG(
     /* Full-width bar labels */
     .bar-label {
       font: 600 10px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: ${theme.textAccent};
+      fill: #FFFFFF;
       dominant-baseline: auto;
     }
     .pct-label {
