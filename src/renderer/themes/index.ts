@@ -3,6 +3,7 @@ import { neonTheme } from "./neon";
 import { obsidianTheme } from "./obsidian";
 import { emeraldTheme } from "./emerald";
 import { roseTheme } from "./rose";
+import { terminalTheme } from "./terminal";
 import { Theme } from "../../engine/types";
 
 export const THEMES: Record<string, Theme> = {
@@ -11,6 +12,7 @@ export const THEMES: Record<string, Theme> = {
   obsidian: obsidianTheme,
   emerald: emeraldTheme,
   rose: roseTheme,
+  terminal: terminalTheme,
 };
 
 export function getTheme(name: string): Theme {
