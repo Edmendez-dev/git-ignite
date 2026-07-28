@@ -9,57 +9,56 @@
   </defs>
 
   <style>
-    .card-bg { fill: #0D1117; }
+    .card-bg { fill: #0C0C0C; }
 
     .title-text {
       font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #8B949E;
+      fill: #1A9E3D;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
     .username-text {
       font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #E6EDF3;
+      fill: #00FF41;
     }
 
     /* Full-width bar labels */
     .bar-label {
       font: 600 10px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #ffffffcc;
+      fill: #FFFFFF;
       dominant-baseline: auto;
     }
     .pct-label {
       font: 400 10px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #6e7681;
+      fill: #2BAA2B;
       dominant-baseline: auto;
     }
 
     /* Chip labels */
     .chip-label {
       font: 600 10px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #C9D1D9;
+      fill: #4DFF4D;
       dominant-baseline: auto;
     }
     .chip-pct {
       font-weight: 400;
-      fill: #6e7681;
+      fill: #2BAA2B;
     }
 
     /* Donut center */
     .donut-center-name {
       font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #E6EDF3;
+      fill: #00FF41;
       text-anchor: middle;
       dominant-baseline: middle;
     }
     .donut-center-sub {
       font: 400 9px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #484F58;
+      fill: #1F7A1F;
       text-anchor: middle;
     }
 
-    /* INTRO ANIMATIONS (play once on load) */
-
+    /* INTRO ANIMATIONS */
     @keyframes card-in {
       from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -125,21 +124,18 @@
       <!-- Background -->
       <rect class="card-bg" width="495" height="237" rx="10"/>
 
-      <!-- Accent border top -->
-      <rect x="0" y="0" width="495" height="3" rx="1.5" fill="url(#header-grad)"/>
-
       <!-- Header -->
       <text x="18" y="23" class="title-text">Most Used Languages</text>
       <text x="477" y="23" text-anchor="end" class="username-text">@octocat</text>
 
       <!-- Separator -->
-      <line x1="18" y1="32" x2="360" y2="32" stroke="#21262D" stroke-width="1"/>
+      <line x1="18" y1="32" x2="360" y2="32" stroke="#2D2D2D" stroke-width="1"/>
 
       <!-- Bar chart rows (top 6) -->
 
       <!-- row 0: TypeScript -->
       <g class="lang-row" style="animation-delay:0.00s">
-        <rect x="18" y="50" width="292" height="17" rx="4" fill="#161B22"/>
+        <rect x="18" y="50" width="292" height="17" rx="4" fill="#151515"/>
         <rect class="lang-bar" x="18" y="50" width="292" height="17" rx="4" fill="#3178c6"
               style="animation-delay:0.00s;"
               filter="url(#bar-glow-0)"/>
@@ -157,7 +153,7 @@
 
       <!-- row 1: Python -->
       <g class="lang-row" style="animation-delay:0.07s">
-        <rect x="18" y="74" width="292" height="17" rx="4" fill="#161B22"/>
+        <rect x="18" y="74" width="292" height="17" rx="4" fill="#151515"/>
         <rect class="lang-bar" x="18" y="74" width="164" height="17" rx="4" fill="#3572A5"
               style="animation-delay:0.07s;"
               filter="url(#bar-glow-1)"/>
@@ -175,7 +171,7 @@
 
       <!-- row 2: Rust -->
       <g class="lang-row" style="animation-delay:0.14s">
-        <rect x="18" y="98" width="292" height="17" rx="4" fill="#161B22"/>
+        <rect x="18" y="98" width="292" height="17" rx="4" fill="#151515"/>
         <rect class="lang-bar" x="18" y="98" width="105" height="17" rx="4" fill="#dea584"
               style="animation-delay:0.14s;"
               filter="url(#bar-glow-2)"/>
@@ -193,7 +189,7 @@
 
       <!-- row 3: Go -->
       <g class="lang-row" style="animation-delay:0.21s">
-        <rect x="18" y="122" width="292" height="17" rx="4" fill="#161B22"/>
+        <rect x="18" y="122" width="292" height="17" rx="4" fill="#151515"/>
         <rect class="lang-bar" x="18" y="122" width="69" height="17" rx="4" fill="#00ADD8"
               style="animation-delay:0.21s;"
               filter="url(#bar-glow-3)"/>
@@ -211,7 +207,7 @@
 
       <!-- row 4: Shell -->
       <g class="lang-row" style="animation-delay:0.28s">
-        <rect x="18" y="146" width="292" height="17" rx="4" fill="#161B22"/>
+        <rect x="18" y="146" width="292" height="17" rx="4" fill="#151515"/>
         <rect class="lang-bar" x="18" y="146" width="43" height="17" rx="4" fill="#89e051"
               style="animation-delay:0.28s;"
               filter="url(#bar-glow-4)"/>
@@ -229,7 +225,7 @@
 
       <!-- row 5: HTML -->
       <g class="lang-row" style="animation-delay:0.35s">
-        <rect x="18" y="170" width="292" height="17" rx="4" fill="#161B22"/>
+        <rect x="18" y="170" width="292" height="17" rx="4" fill="#151515"/>
         <rect class="lang-bar" x="18" y="170" width="25" height="17" rx="4" fill="#e34c26"
               style="animation-delay:0.35s;"
               filter="url(#bar-glow-5)"/>
@@ -249,16 +245,13 @@
 
       <!-- chip: CSS -->
       <g class="lang-chip" style="animation-delay:0.42s">
-        <!-- pill background -->
-        <rect x="18" y="200" width="76" height="18" rx="9" fill="#161B22"/>
-        <!-- colour dot -->
+        <rect x="18" y="200" width="76" height="18" rx="9" fill="#151515"/>
         <circle cx="29" cy="209" r="3" fill="#563d7c"/>
-        <!-- label -->
         <text x="36" y="213" class="chip-label">CSS <tspan class="chip-pct">1.5%</tspan></text>
       </g>
 
       <!-- Donut chart -->
-      <circle cx="415" cy="100" r="52" stroke="#161B22" stroke-width="14" fill="none"/>
+      <circle cx="415" cy="100" r="52" stroke="#151515" stroke-width="14" fill="none"/>
 <path class="donut-seg" d="M 444.588 142.762 A 52 52 0 0 0 415.000 48.000" stroke="#3178c6" stroke-width="14" fill="none" stroke-linecap="round"
               style="animation-delay:0.00s; --seg-len:134.61;"/>
 <path class="donut-seg" d="M 376.066 134.470 A 52 52 0 0 0 442.309 144.252" stroke="#3572A5" stroke-width="14" fill="none" stroke-linecap="round"

@@ -11,5 +11,5 @@
 # Dist
 /dist
 
-#Test SVG
-/test/*.svg
+# Test SVG output
+test/*.svg

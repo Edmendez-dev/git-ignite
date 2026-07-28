@@ -1,4 +1,4 @@
-import { LanguageStats } from "../engine/types";
+import { LanguageStats, Theme } from "../engine/types";
 
 // Palette & helpers
 function adjustColor(hex: string, amount: number): string {
@@ -78,7 +78,10 @@ function chipWidth(lang: { name: string; percentage: number }): number {
 }
 
 // Main renderer
-export function generateLanguagesSVG(stats: LanguageStats): string {
+export function generateLanguagesSVG(
+  stats: LanguageStats,
+  theme: Theme,
+): string {
   const { languages, username } = stats;
 
   // Split into bars vs chips
@@ -115,8 +118,8 @@ export function generateLanguagesSVG(stats: LanguageStats): string {
 
   if (languages.length === 0) {
     return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${W}" height="${H}" rx="10" fill="#0D1117"/>
-  <text x="${W / 2}" y="${H / 2}" text-anchor="middle" font-family="Segoe UI, Ubuntu, sans-serif" font-size="14" fill="#484F58">No language data found.</text>
+  <rect width="${W}" height="${H}" rx="10" fill="${theme.background}"/>
+  <text x="${W / 2}" y="${H / 2}" text-anchor="middle" font-family="Segoe UI, Ubuntu, sans-serif" font-size="14" fill="${theme.textMuted}">No language data found.</text>
 </svg>`;
   }
 
@@ -133,7 +136,7 @@ export function generateLanguagesSVG(stats: LanguageStats): string {
       return `
       <!-- row ${i}: ${lang.name} -->
       <g class="lang-row" style="animation-delay:${animDelay}s">
-        <rect x="${BAR_LEFT}" y="${y}" width="${BAR_WIDTH_TOTAL}" height="${ROW_HEIGHT}" rx="4" fill="#161B22"/>
+        <rect x="${BAR_LEFT}" y="${y}" width="${BAR_WIDTH_TOTAL}" height="${ROW_HEIGHT}" rx="4" fill="${theme.surface}"/>
         <rect class="lang-bar" x="${BAR_LEFT}" y="${y}" width="${barW}" height="${ROW_HEIGHT}" rx="4" fill="${lang.color}"
               style="animation-delay:${animDelay}s;"
               filter="url(#bar-glow-${i})"/>
@@ -158,11 +161,8 @@ export function generateLanguagesSVG(stats: LanguageStats): string {
       return `
       <!-- chip: ${lang.name} -->
       <g class="lang-chip" style="animation-delay:${animDelay}s">
-        <!-- pill background -->
-        <rect x="${x}" y="${y}" width="${w}" height="${CHIP_H}" rx="${CHIP_H / 2}" fill="#161B22"/>
-        <!-- colour dot -->
+        <rect x="${x}" y="${y}" width="${w}" height="${CHIP_H}" rx="${CHIP_H / 2}" fill="${theme.surface}"/>
         <circle cx="${x + CHIP_PAD_X + CHIP_DOT / 2}" cy="${y + CHIP_H / 2}" r="${CHIP_DOT / 2}" fill="${lang.color}"/>
-        <!-- label -->
         <text x="${x + CHIP_PAD_X + CHIP_DOT + 4}" y="${y + CHIP_H / 2 + 4}" class="chip-label">${lang.name} <tspan class="chip-pct">${lang.percentage.toFixed(1)}%</tspan></text>
       </g>`;
     })
@@ -194,57 +194,56 @@ export function generateLanguagesSVG(stats: LanguageStats): string {
 
   // CSS
   const css = `
-    .card-bg { fill: #0D1117; }
+    .card-bg { fill: ${theme.background}; }
 
     .title-text {
       font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #8B949E;
+      fill: ${theme.textSecondary};
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
     .username-text {
       font: bold 15px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #E6EDF3;
+      fill: ${theme.textPrimary};
     }
 
     /* Full-width bar labels */
     .bar-label {
       font: 600 10px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #ffffffcc;
+      fill: #FFFFFF;
       dominant-baseline: auto;
     }
     .pct-label {
       font: 400 10px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #6e7681;
+      fill: ${theme.textSubtle};
       dominant-baseline: auto;
     }
 
     /* Chip labels */
     .chip-label {
       font: 600 ${CHIP_FONT}px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #C9D1D9;
+      fill: ${theme.textBody};
       dominant-baseline: auto;
     }
     .chip-pct {
       font-weight: 400;
-      fill: #6e7681;
+      fill: ${theme.textSubtle};
     }
 
     /* Donut center */
     .donut-center-name {
       font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #E6EDF3;
+      fill: ${theme.textPrimary};
       text-anchor: middle;
       dominant-baseline: middle;
     }
     .donut-center-sub {
       font: 400 9px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #484F58;
+      fill: ${theme.textMuted};
       text-anchor: middle;
     }
 
-    /* INTRO ANIMATIONS (play once on load) */
-
+    /* INTRO ANIMATIONS */
     @keyframes card-in {
       from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -323,15 +322,12 @@ export function generateLanguagesSVG(stats: LanguageStats): string {
       <!-- Background -->
       <rect class="card-bg" width="${W}" height="${H}" rx="10"/>
 
-      <!-- Accent border top -->
-      <rect x="0" y="0" width="${W}" height="3" rx="1.5" fill="url(#header-grad)"/>
-
       <!-- Header -->
       <text x="${BAR_LEFT}" y="23" class="title-text">Most Used Languages</text>
       <text x="${W - 18}" y="23" text-anchor="end" class="username-text">@${username}</text>
 
       <!-- Separator -->
-      <line x1="${BAR_LEFT}" y1="32" x2="${BAR_RIGHT_MAX + 50}" y2="32" stroke="#21262D" stroke-width="1"/>
+      <line x1="${BAR_LEFT}" y1="32" x2="${BAR_RIGHT_MAX + 50}" y2="32" stroke="${theme.border}" stroke-width="1"/>
 
       <!-- Bar chart rows (top ${MAX_BARS}) -->
 ${barRows}
@@ -344,7 +340,7 @@ ${chipItems}`
       }
 
       <!-- Donut chart -->
-      <circle cx="${DONUT_CX}" cy="${DONUT_CY}" r="${DONUT_R}" stroke="#161B22" stroke-width="${DONUT_STROKE}" fill="none"/>
+      <circle cx="${DONUT_CX}" cy="${DONUT_CY}" r="${DONUT_R}" stroke="${theme.surface}" stroke-width="${DONUT_STROKE}" fill="none"/>
 ${donutSegments}
 
       <!-- Donut center -->

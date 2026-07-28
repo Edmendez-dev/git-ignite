@@ -1,6 +1,10 @@
 import { generateSVG } from "../src/renderer/streak-builder";
 import { generateLanguagesSVG } from "../src/renderer/languages-builder";
+import { getTheme } from "../src/renderer/themes";
 import * as fs from "fs";
+
+// Get the default theme
+const theme = getTheme("classic");
 
 // Mock data: Streak card
 const mockStreakStats = {
@@ -27,11 +31,11 @@ const mockLanguageStats = {
 };
 
 // Generate & write Streak SVG
-const streakSvg = generateSVG(mockStreakStats);
+const streakSvg = generateSVG(mockStreakStats, theme);
 fs.writeFileSync("ignite-streak.svg", streakSvg);
 console.log("SVG generated and saved as ignite-streak.svg");
 
 // Generate & write Languages SVG
-const languagesSvg = generateLanguagesSVG(mockLanguageStats);
+const languagesSvg = generateLanguagesSVG(mockLanguageStats, theme);
 fs.writeFileSync("ignite-languages.svg", languagesSvg);
 console.log("SVG generated and saved as ignite-languages.svg");
