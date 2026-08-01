@@ -1,16 +1,24 @@
 // Data interface
-export interface ContributionDay {
+export interface RawContributionDay {
   contributionCount: number;
   date: string;
   color: string;
-  tier: "ignition" | "short-circuit" | "overload";
 }
 
-export interface ContributionCalendar {
+export interface RawContributionCalendar {
   totalContributions: number;
   weeks: {
-    contributionDays: ContributionDay[];
+    contributionDays: RawContributionDay[];
   }[];
+}
+
+// Interface for the response from GitHub's GraphQL API for contributions
+export interface ContributionsResponse {
+  user: {
+    contributionsCollection: {
+      contributionCalendar: RawContributionCalendar;
+    };
+  };
 }
 
 export interface StreakStats {

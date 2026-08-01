@@ -1,7 +1,13 @@
-import { ContributionCalendar, ContributionDay, StreakStats } from "./types";
+import {
+  RawContributionCalendar,
+  RawContributionDay,
+  StreakStats,
+} from "./types";
 
-export function calculateStreak(calendar: ContributionCalendar): StreakStats {
-  const allDays: ContributionDay[] = calendar.weeks
+export function calculateStreak(
+  calendar: RawContributionCalendar,
+): StreakStats {
+  const allDays: RawContributionDay[] = calendar.weeks
     .flatMap((week) => week.contributionDays)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 

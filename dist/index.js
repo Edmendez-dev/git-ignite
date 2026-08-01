@@ -30023,10 +30023,10 @@ async function fetchUserStats(username, token) {
         const response = await octokit.graphql(exports.FETCH_CONTRIBUTIONS_QUERY, {
             login: username,
         });
-        return response.user.contributionsCollection.contributionsCalendar;
+        return response.user.contributionsCollection.contributionCalendar;
     }
     catch (error) {
-        throw new Error(`Error fetching GitHub stats:" ${error instanceof Error ? error.message : String(error)}`);
+        throw new Error(`Error fetching GitHub stats: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
 
