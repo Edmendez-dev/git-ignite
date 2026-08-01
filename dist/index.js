@@ -30043,9 +30043,9 @@ query($login: String!) {
   }
 }`;
 exports.FETCH_CONTRIBUTIONS_QUERY = `
-query($login: String!) {
+query($login: String!, $from: DateTime!, $to: DateTime!) {
     user(login: $login) {
-        contributionsCollection {
+        contributionsCollection(from: $from, to: $to) {
             contributionCalendar {
                 totalContributions 
                 weeks {
