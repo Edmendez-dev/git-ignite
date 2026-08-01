@@ -21,6 +21,10 @@ export interface ContributionsResponse {
   };
 }
 
+export interface YearCache {
+  [year: number]: RawContributionCalendar;
+}
+
 export interface StreakStats {
   currentStreak: number;
   todayPoints: number;

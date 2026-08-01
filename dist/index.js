@@ -29992,14 +29992,56 @@ function calculateStreak(calendar) {
 /***/ }),
 
 /***/ 3003:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.FETCH_CONTRIBUTIONS_QUERY = void 0;
+exports.FETCH_CONTRIBUTIONS_QUERY = exports.FETCH_USER_CREATED_QUERY = void 0;
+exports.fetchAllContributions = fetchAllContributions;
 exports.fetchUserStats = fetchUserStats;
+const fs = __importStar(__nccwpck_require__(9896));
+const path = __importStar(__nccwpck_require__(6928));
 const github_1 = __nccwpck_require__(3228);
+exports.FETCH_USER_CREATED_QUERY = `
+query($login: String!) {
+  user(login: $login) {
+    createdAt
+  }
+}`;
 exports.FETCH_CONTRIBUTIONS_QUERY = `
 query($login: String!) {
     user(login: $login) {
@@ -30017,13 +30059,104 @@ query($login: String!) {
         }
     }
 }`;
+const CACHE_FILE = path.join(process.cwd(), ".gitignite-cache", "years.json");
+function loadYearCache() {
+    if (!fs.existsSync(CACHE_FILE))
+        return {};
+    try {
+        return JSON.parse(fs.readFileSync(CACHE_FILE, "utf-8"));
+    }
+    catch (error) {
+        console.error("Error parsing cache file:", error);
+        return {};
+    }
+}
+function saveYearCache(cache) {
+    const dir = path.dirname(CACHE_FILE);
+    if (!fs.existsSync(dir))
+        fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache));
+}
+async function fetchAllContributions(octokit, username, ranges) {
+    const results = new Map();
+    // Threshold: if it's a few years, in parallel; if it's many, sequential so as not to hit the GraphQL rate limit all at once.
+    const PARALLEL_THRESHOLD = 4;
+    if (ranges.length <= PARALLEL_THRESHOLD) {
+        const response = await Promise.all(ranges.map((range) => octokit.graphql(exports.FETCH_CONTRIBUTIONS_QUERY, {
+            login: username,
+            from: range.from,
+            to: range.to,
+        })));
+        response.forEach((res, i) => {
+            results.set(ranges[i].year, res.user.contributionsCollection.contributionCalendar);
+        });
+    }
+    else {
+        // Sequential: one query at a time, avoids rate limit bursts
+        for (const range of ranges) {
+            const res = await octokit.graphql(exports.FETCH_CONTRIBUTIONS_QUERY, {
+                login: username,
+                from: range.from,
+                to: range.to,
+            });
+            results.set(range.year, res.user.contributionsCollection.contributionCalendar);
+        }
+    }
+    return results;
+}
 async function fetchUserStats(username, token) {
     const octokit = (0, github_1.getOctokit)(token);
     try {
-        const response = await octokit.graphql(exports.FETCH_CONTRIBUTIONS_QUERY, {
+        const createdAtResponse = await octokit.graphql(exports.FETCH_USER_CREATED_QUERY, {
             login: username,
         });
-        return response.user.contributionsCollection.contributionCalendar;
+        const createdAt = new Date(createdAtResponse.user.createdAt);
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const allRanges = [];
+        let cursor = new Date(createdAt);
+        while (cursor < today) {
+            const from = new Date(cursor);
+            const to = new Date(cursor);
+            to.setFullYear(to.getFullYear() + 1);
+            if (to > today) {
+                to.setTime(today.getTime());
+            }
+            allRanges.push({
+                from: from.toISOString(),
+                to: to.toISOString(),
+                year: cursor.getFullYear(),
+            });
+            cursor.setFullYear(cursor.getFullYear() + 1);
+        }
+        // Load cache and check if we have cached data for the years we need
+        const cache = loadYearCache();
+        const rangesToFetch = allRanges.filter((range) => range.year === currentYear || !(range.year in cache));
+        const fetched = rangesToFetch.length > 0
+            ? await fetchAllContributions(octokit, username, rangesToFetch)
+            : new Map();
+        let cacheChanged = false;
+        for (const [year, calendar] of fetched) {
+            if (year !== currentYear) {
+                cache[year] = calendar;
+                cacheChanged = true;
+            }
+        }
+        if (cacheChanged)
+            saveYearCache(cache);
+        const mergedCalendar = {
+            totalContributions: 0,
+            weeks: [],
+        };
+        for (const range of allRanges) {
+            const calendar = fetched.get(range.year) ?? cache[range.year];
+            if (!calendar) {
+                throw new Error(`Missing contribution data for year ${range.year}`);
+            }
+            mergedCalendar.totalContributions += calendar.totalContributions;
+            mergedCalendar.weeks.push(...calendar.weeks);
+        }
+        return mergedCalendar;
     }
     catch (error) {
         throw new Error(`Error fetching GitHub stats: ${error instanceof Error ? error.message : String(error)}`);

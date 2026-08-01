@@ -12,6 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore years cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .gitignite-cache
+          key: gitignite-test-years-${{ github.run_id }}
+          restore-keys: |
+            gitignite-test-years-
+
       - name: Run GitIgnite (local build)
         uses: ./
         with:
@@ -25,3 +33,10 @@ jobs:
         with:
           name: gitignite-preview
           path: stats/*.svg
+
+      - name: Save years cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .gitignite-cache
+          key: gitignite-test-years-${{ github.run_id }}
