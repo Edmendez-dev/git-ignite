@@ -30004,7 +30004,7 @@ exports.FETCH_CONTRIBUTIONS_QUERY = `
 query($login: String!) {
     user(login: $login) {
         contributionsCollection {
-            contributionsCalendar {
+            contributionCalendar {
                 totalContributions 
                 weeks {
                     contributionDays {
