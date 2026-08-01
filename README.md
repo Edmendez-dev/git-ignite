@@ -88,63 +88,122 @@ GitIgnite includes six themes designed for different personal branding styles:
 
 ## How to Use
 
-Para mostrar estas métricas en tu perfil de GitHub, usa tu repositorio especial de perfil:
+GitIgnite is a GitHub Action that generates SVG cards with your GitHub statistics (contribution streak, most used languages, etc.) to display in your profile's README.
 
-- `github.com/tu-usuario/tu-usuario`
+There are two ways to use this repository depending on what you want to do:
 
-Ejemplo real:
+- **[Normal Use](#-normal-use)** — if you only want to display your statistics in your GitHub profile.
 
-- `github.com/octocat/octocat`
+- **[Contribute to the project](#-contribute-test)** — if you want to modify GitIgnite and test your changes before opening a Pull Request.
 
-En ese repositorio, puedes:
+---
 
-1. Ejecutar GitIgnite por workflow.
-2. Guardar los SVGs generados (por ejemplo en `stats/`).
-3. Insertar las imágenes en tu `README.md` de perfil.
+### Normal Use
 
-## Ejemplo de workflow para `github.com/tu-usuario/tu-usuario`
+#### 1. Create (or use) your profile repository
 
-Guárdalo como `.github/workflows/gitignite.yml`:
+If you don't already have one, create a repository with the same name as your GitHub username (e.g., `Edmendez-dev/Edmendez-dev`). This is the special repository whose README is displayed in your profile.
 
-```yml
+#### 2. Create a dedicated branch for the result.
+
+GitIgnite generates SVG files that are saved in the repository. To prevent this from cluttering your commit history in `main`, we recommend using a dedicated branch:
+
+```bash
+git checkout --orphan gitignite-output
+git commit --allow-empty -m "init: gitignite output branch"
+git push origin gitignite-output
+```
+
+`--orphan` creates a branch with no shared history from `main`, completely isolated. This branch will only contain the generated SVGs — never your code or other files.
+
+#### 3. Generate a Personal Access Token (PAT)
+
+GitIgnite needs to read your statistics (including private repositories if you want them to count). Go to:
+
+**GitHub → Settings → Developer settings → Personal access tokens** and generate a token with the scope `repo`.
+
+Save it—it's only displayed once.
+
+#### 4. Add the token as a secret
+
+In your profile repository: **Settings → Secrets and variables → Actions → New repository secret**.
+
+- **Name:** `GH_PAT`
+- **Value:** the token you generated
+
+#### 5. Create the workflow
+
+In your profile repository, create the file `.github/workflows/gitignite.yml`:
+
+```yaml
 name: GitIgnite Profile Stats
 
 on:
   schedule:
-    - cron: "0 */12 * * *"
-  workflow_dispatch:
+    - cron: "0 */12 * * *" # It is updated every 12 hours
+  workflow_dispatch: # You can also run it manually
+
+permissions:
+  contents: write
 
 jobs:
   generate-stats:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: gitignite-output
+
+      - name: Restore years cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .gitignite-cache
+          key: gitignite-years-${{ github.repository_owner }}-${{ github.run_id }}
+          restore-keys: |
+            gitignite-years-${{ github.repository_owner }}-
 
       - name: Generate GitIgnite cards
         uses: Edmendez-dev/git-ignite@v1
         with:
-          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          gh_token: ${{ secrets.GH_PAT }}
           user_name: ${{ github.repository_owner }}
           theme: classic
           output_path: stats
 
-      - name: Upload SVGs as Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Commit y push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add stats/*.svg
+          git diff --staged --quiet || (git commit --amend --no-edit && git push --force)
+
+      - name: Save years cache
+        if: always()
+        uses: actions/cache/save@v4
         with:
-          name: gitignite-stats
-          path: stats/*.svg
+          path: .gitignite-cache
+          key: gitignite-years-${{ github.repository_owner }}-${{ github.run_id }}
 ```
 
-Luego en tu `README.md` de perfil:
+> 💡 This workflow **never touches `main`** — it only reads from and writes to the `gitignite-output` branch. Furthermore, instead of creating a new commit each time it runs, it rewrites the same commit (`--amend --no-edit`), so even if it runs several times a day, your history won't be filled with duplicate commits.
+
+#### 6. Run the workflow for the first time
+
+Go to the **Actions** tab of your repo → select "GitIgnite Profile Stats" → **Run workflow**. This generates the SVGs for the first time in the `gitignite-output` branch.
+
+#### 7. Display the images in your README
+
+In the README of your profile repo (main branch), add:
 
 ```md
-<div align="center">
+![GitIgnite Streak](https://raw.githubusercontent.com/TU-USUARIO/TU-USUARIO/gitignite-output/stats/ignite-streak.svg)
 
-</div>
+![GitIgnite Languages](https://raw.githubusercontent.com/TU-USUARIO/TU-USUARIO/gitignite-output/stats/ignite-languages.svg)
 ```
 
-## Inputs
+Replace `YOUR-USERNAME` with your GitHub username in both parts of the URL. Done — your cards will automatically update every 12 hours.
+
+### Inputs
 
 | Input         | Required | Default   | Description                              |
 | ------------- | -------- | --------- | ---------------------------------------- |
@@ -154,12 +213,25 @@ Luego en tu `README.md` de perfil:
 | `show_levels` | No       | `true`    | Support for displaying intensity levels. |
 | `output_path` | No       | `stats`   | Output directory for SVGs.               |
 
-## Outputs
+#### Changing the theme
 
-- `streak`: Current streak (days).
-- `level`: Calculated intensity level.
-- `svg`: SVG content of the streak card.
-- `languages_svg`: SVG content of the languages ​​card.
+By default, GitIgnite uses the `classic` theme. If you want a different style, simply change the value of the `theme` input in your workflow, **[list of themes](#themes)**:
+
+```yaml
+- name: Generate GitIgnite cards
+  uses: Edmendez-dev/git-ignite@v1
+  with:
+    gh_token: ${{ secrets.GH_PAT }}
+    user_name: ${{ github.repository_owner }}
+    theme: neon # <-- Change it here
+    output_path: stats
+```
+
+> If you misspell a theme name (or use one that doesn't exist), GitIgnite won't fail—it will automatically revert to `classic` and alert you with a `warning` in the workflow logs, showing the complete list of available themes.
+
+You don't need to recreate the secret or change anything else—just change the value of `theme`, push the workflow, and run the action again (or wait for the next scheduled execution).
+
+---
 
 ## Generated Files
 
@@ -216,23 +288,106 @@ npm run format
 npm run lint
 ```
 
-### Adding New Features
-
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
 
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Make your changes** with clear commit messages
-4. **Push to your fork**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-5. **Open a Pull Request** with a detailed description
+#### 1. **Fork the repository**
+
+#### 2. **Create a feature branch**
+
+```bash
+git checkout -b feature/amazing-feature
+```
+
+#### 3. **Install dependencies and make your changes** with clear commit messages
+
+```bash
+npm install
+```
+
+Edit what you need inside `src/`.
+
+#### 4. **Compile the bundle**
+
+GitHub Actions do not execute `src/` directly — they need the code already packaged in `dist/`:
+
+```bash
+npm run build
+```
+
+This generates `dist/index.js`, which **must be uploaded to the repo** (unlike other projects, here `dist/` does not go in `.gitignore`, because it is what GitHub Actions actually executes).
+
+#### 5. **Add the test secret**
+
+In your fork: **Settings → Secrets and variables → Actions**, add a secret `GH_PAT` with one of your tokens (scope `repo`), so that the action has something to authenticate with during testing.
+
+#### 6. **Use the test workflow**
+
+This repo includes `.github/workflows/test-action.yml`, designed specifically for this flow — it runs the action **from the local source code** (`uses: ./`), without depending on any tags or releases:
+
+```yaml
+name: Test GitIgnite
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/amazing-feature # <-- Write your development branch here
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run GitIgnite (local build)
+        uses: ./
+        with:
+          gh_token: ${{ secrets.GH_PAT }}
+          user_name: Edmendez-dev
+          theme: classic
+          output_path: stats
+
+      - name: Upload SVG for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitignite-preview
+          path: stats/*.svg
+```
+
+> ⚠️ Adjust the branch name in `branches:` to match yours (e.g., `feat/my-change`), or simply trigger the workflow manually without relying on the push.
+
+This workflow **doesn't commit or push anywhere** — it only generates the SVGs and uploads them as a downloadable artifact, so you can review them visually without affecting any branch.
+
+#### 7. **Run the workflow and review the result**
+
+1. Push your branch: `git push origin feat/my-change`
+
+2. Go to the **Actions** tab of your fork → select "Test GitIgnite" → **Run workflow**, choosing your branch.
+
+3. When it finishes, scroll down to the **Artifacts** section of that run and download `gitignite-preview`.
+
+4. Open the SVG and confirm that it looks correct.
+
+Repeat the cycle (edit → `npm run build` → commit → push → run workflow) until your change is ready.
+
+#### 8. Open the Pull Request
+
+Once you've visually confirmed that your change works, open the pull request against `main`. Include a screenshot of the SVG generated during your testing in the description—it greatly helps with the review.
+
+---
+
+### Why two different workflows?
+
+|                                  | `gitignite.yml` (production)                     | `test-action.yml` (contribution)           |
+| -------------------------------- | ------------------------------------------------ | ------------------------------------------ |
+| Where you live                   | In the repo of **each user** who uses GitIgnite  | Within **this repo**                       |
+| Source of the action             | `Edmendez-dev/git-ignite@v1` (published version) | `./` (local code, unpublished)             |
+| What does he do with the result? | Commit it to the `gitignite-output` branch       | Upload it as an artifact for manual review |
+| Touch `main`/`gitignite-output`  | Only `gitignite-output`, never `main`            | It doesn't touch any branch of the repo    |
+
+This separation exists so that trusting GitIgnite is easy to verify: the action never writes directly to your repo on its own — it's the workflow (which you control and can read) that decides what to do with the result.
 
 ### Guidelines
 
