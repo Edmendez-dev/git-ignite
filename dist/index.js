@@ -30088,6 +30088,10 @@ async function fetchAllContributions(octokit, username, ranges) {
             to: range.to,
         })));
         response.forEach((res, i) => {
+            const cal = res.user.contributionsCollection.contributionCalendar;
+            console.log(`[DEBUG] Requested: ${ranges[i].from} → ${ranges[i].to} | ` +
+                `API returned total=${cal.totalContributions}, ` +
+                `firstDay=${cal.weeks[0]?.contributionDays[0]?.date}`);
             results.set(ranges[i].year, res.user.contributionsCollection.contributionCalendar);
         });
     }
