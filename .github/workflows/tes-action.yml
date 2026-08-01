@@ -16,9 +16,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .gitignite-cache
-          key: gitignite-test-years-${{ github.run_id }}
+          key: gitignite-test-years-v2-${{ github.run_id }}
           restore-keys: |
-            gitignite-test-years-
+            gitignite-test-years-v2-
 
       - name: Run GitIgnite (local build)
         uses: ./
@@ -39,4 +39,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .gitignite-cache
-          key: gitignite-test-years-${{ github.run_id }}
+          key: gitignite-test-years-v2-${{ github.run_id }}
