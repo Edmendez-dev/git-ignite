@@ -227,7 +227,7 @@ By default, GitIgnite uses the `classic` theme. If you want a different style, s
     output_path: stats
 ```
 
-> If you misspell a theme name (or use one that doesn't exist), GitIgnite won't fail—it will automatically revert to `classic` and alert you with a `warning` in the workflow logs, showing the complete list of available themes.
+> 💡 If you misspell a theme name (or use one that doesn't exist), GitIgnite won't fail—it will automatically revert to `classic` and alert you with a `warning` in the workflow logs, showing the complete list of available themes.
 
 You don't need to recreate the secret or change anything else—just change the value of `theme`, push the workflow, and run the action again (or wait for the next scheduled execution).
 
