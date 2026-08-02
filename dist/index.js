@@ -29970,9 +29970,7 @@ function calculateStreak(calendar) {
         tier = "short-circuit";
     }
     // Total contributions up to today
-    const totalContributions = allDays
-        .filter((d) => d.date <= todayDateStr)
-        .reduce((sum, d) => sum + d.contributionCount, 0);
+    const totalContributions = calendar.totalContributions;
     // Earliest day with at least one contribution
     const daysWithContribs = allDays
         .filter((d) => d.contributionCount > 0)
@@ -30088,10 +30086,6 @@ async function fetchAllContributions(octokit, username, ranges) {
             to: range.to,
         })));
         response.forEach((res, i) => {
-            const cal = res.user.contributionsCollection.contributionCalendar;
-            console.log(`[DEBUG] Requested: ${ranges[i].from} → ${ranges[i].to} | ` +
-                `API returned total=${cal.totalContributions}, ` +
-                `firstDay=${cal.weeks[0]?.contributionDays[0]?.date}`);
             results.set(ranges[i].year, res.user.contributionsCollection.contributionCalendar);
         });
     }
@@ -30132,6 +30126,7 @@ async function fetchUserStats(username, token) {
                 year: cursor.getFullYear(),
             });
             cursor.setFullYear(cursor.getFullYear() + 1);
+            cursor.setDate(cursor.getDate() + 1);
         }
         // Load cache and check if we have cached data for the years we need
         const cache = loadYearCache();
@@ -30157,8 +30152,6 @@ async function fetchUserStats(username, token) {
             if (!calendar) {
                 throw new Error(`Missing contribution data for year ${range.year}`);
             }
-            console.log(`[DEBUG] Year ${range.year} source=${fetched.has(range.year) ? "FRESH" : "CACHE"} | ` +
-                `total=${calendar.totalContributions}, firstDay=${calendar.weeks[0]?.contributionDays[0]?.date}`);
             mergedCalendar.totalContributions += calendar.totalContributions;
             mergedCalendar.weeks.push(...calendar.weeks);
         }
@@ -30318,8 +30311,6 @@ async function run() {
             (0, github_1.fetchUserStats)(username, token),
             (0, languages_1.fetchLanguageStats)(username, token),
         ]);
-        core.info(`Successfully fetched ${calendarData.totalContributions} contributions!`);
-        core.info(`Top language: ${languageStats.languages[0]?.name ?? "none"} (${languageStats.languages[0]?.percentage.toFixed(1) ?? 0}%)`);
         // Calculate streak stats
         const streakStats = (0, calculator_1.calculateStreak)(calendarData);
         core.info(`Current streak: ${streakStats.currentStreak}`);
@@ -30328,11 +30319,6 @@ async function run() {
         // Generate SVGs
         const streakSvg = (0, streak_builder_1.generateSVG)(streakStats, theme);
         const languagesSvg = (0, languages_builder_1.generateLanguagesSVG)(languageStats, theme);
-        // Expose outputs
-        core.setOutput("streak", streakStats.currentStreak.toString());
-        core.setOutput("level", streakStats.level.toString());
-        core.setOutput("svg", streakSvg);
-        core.setOutput("languages_svg", languagesSvg);
         // Write files
         const dir = path.join(process.cwd(), outputPath);
         if (!fs.existsSync(dir))

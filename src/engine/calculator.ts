@@ -53,9 +53,7 @@ export function calculateStreak(
   }
 
   // Total contributions up to today
-  const totalContributions = allDays
-    .filter((d) => d.date <= todayDateStr)
-    .reduce((sum, d) => sum + d.contributionCount, 0);
+  const totalContributions = calendar.totalContributions;
 
   // Earliest day with at least one contribution
   const daysWithContribs = allDays

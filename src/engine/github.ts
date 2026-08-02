@@ -5,6 +5,7 @@ import {
   ContributionsResponse,
   RawContributionCalendar,
   YearCache,
+  fetchUserStatsResponse,
 } from "./types";
 
 export const FETCH_USER_CREATED_QUERY = `
@@ -72,12 +73,6 @@ export async function fetchAllContributions(
     );
 
     response.forEach((res, i) => {
-      const cal = res.user.contributionsCollection.contributionCalendar;
-      console.log(
-        `[DEBUG] Requested: ${ranges[i].from} → ${ranges[i].to} | ` +
-          `API returned total=${cal.totalContributions}, ` +
-          `firstDay=${cal.weeks[0]?.contributionDays[0]?.date}`,
-      );
       results.set(
         ranges[i].year,
         res.user.contributionsCollection.contributionCalendar,
@@ -110,7 +105,7 @@ export async function fetchUserStats(
   const octokit = getOctokit(token);
 
   try {
-    const createdAtResponse: any = await octokit.graphql(
+    const createdAtResponse: fetchUserStatsResponse = await octokit.graphql(
       FETCH_USER_CREATED_QUERY,
       {
         login: username,
@@ -136,6 +131,7 @@ export async function fetchUserStats(
         year: cursor.getFullYear(),
       });
       cursor.setFullYear(cursor.getFullYear() + 1);
+      cursor.setDate(cursor.getDate() + 1);
     }
 
     // Load cache and check if we have cached data for the years we need
@@ -168,10 +164,6 @@ export async function fetchUserStats(
       if (!calendar) {
         throw new Error(`Missing contribution data for year ${range.year}`);
       }
-      console.log(
-        `[DEBUG] Year ${range.year} source=${fetched.has(range.year) ? "FRESH" : "CACHE"} | ` +
-          `total=${calendar.totalContributions}, firstDay=${calendar.weeks[0]?.contributionDays[0]?.date}`,
-      );
       mergedCalendar.totalContributions += calendar.totalContributions;
       mergedCalendar.weeks.push(...calendar.weeks);
     }

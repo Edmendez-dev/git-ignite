@@ -25,6 +25,12 @@ export interface YearCache {
   [year: number]: RawContributionCalendar;
 }
 
+export interface fetchUserStatsResponse {
+  user: {
+    createdAt: string;
+  };
+}
+
 export interface StreakStats {
   currentStreak: number;
   todayPoints: number;
