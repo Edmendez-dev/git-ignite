@@ -30,13 +30,6 @@ async function run() {
       fetchLanguageStats(username, token),
     ]);
 
-    core.info(
-      `Successfully fetched ${calendarData.totalContributions} contributions!`,
-    );
-    core.info(
-      `Top language: ${languageStats.languages[0]?.name ?? "none"} (${languageStats.languages[0]?.percentage.toFixed(1) ?? 0}%)`,
-    );
-
     // Calculate streak stats
     const streakStats = calculateStreak(calendarData);
     core.info(`Current streak: ${streakStats.currentStreak}`);
@@ -46,12 +39,6 @@ async function run() {
     // Generate SVGs
     const streakSvg = generateSVG(streakStats, theme);
     const languagesSvg = generateLanguagesSVG(languageStats, theme);
-
-    // Expose outputs
-    core.setOutput("streak", streakStats.currentStreak.toString());
-    core.setOutput("level", streakStats.level.toString());
-    core.setOutput("svg", streakSvg);
-    core.setOutput("languages_svg", languagesSvg);
 
     // Write files
     const dir = path.join(process.cwd(), outputPath);

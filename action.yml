@@ -33,5 +33,5 @@ outputs:
     description: "Calculated effort level (Level 0 to Level 3)"
 
 runs:
-  using: "node20"
+  using: "node24"
   main: "dist/index.js"

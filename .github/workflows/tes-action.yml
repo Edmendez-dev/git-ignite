@@ -1,0 +1,42 @@
+name: Test GitIgnite
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/final-polish-and-docs
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore years cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .gitignite-cache
+          key: gitignite-test-years-v4-${{ github.run_id }}
+          restore-keys: |
+            gitignite-test-years-v4-
+
+      - name: Run GitIgnite (local build)
+        uses: ./
+        with:
+          gh_token: ${{ secrets.GH_PAT }}
+          user_name: Edmendez-dev
+          theme: classic
+          output_path: stats
+
+      - name: Upload SVG for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitignite-preview
+          path: stats/*.svg
+
+      - name: Save years cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .gitignite-cache
+          key: gitignite-test-years-v4-${{ github.run_id }}

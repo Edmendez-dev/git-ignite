@@ -9,7 +9,7 @@
 !.yarn/versions
 
 # Dist
-/dist
+# /dist
 
 # Test SVG output
 test/*.svg
