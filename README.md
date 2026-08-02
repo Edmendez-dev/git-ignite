@@ -407,9 +407,9 @@ GitHub: [@Edmendez-dev](https://github.com/Edmendez-dev)
 
 ## Acknowledgments
 
-- GitHub Actions por la infraestructura de automatización.
-- GitHub GraphQL API por la fuente de datos de contribuciones y lenguajes.
-- Comunidad open source por inspirar mejoras continuas en tooling de perfiles.
+- GitHub Actions for automation infrastructure.
+- GitHub GraphQL API for the contribution and language data feed.
+- Open source community to inspire continuous improvements to profiling tools.
 
 <div align="center">
 
