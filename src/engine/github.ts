@@ -168,6 +168,10 @@ export async function fetchUserStats(
       if (!calendar) {
         throw new Error(`Missing contribution data for year ${range.year}`);
       }
+      console.log(
+        `[DEBUG] Year ${range.year} source=${fetched.has(range.year) ? "FRESH" : "CACHE"} | ` +
+          `total=${calendar.totalContributions}, firstDay=${calendar.weeks[0]?.contributionDays[0]?.date}`,
+      );
       mergedCalendar.totalContributions += calendar.totalContributions;
       mergedCalendar.weeks.push(...calendar.weeks);
     }
