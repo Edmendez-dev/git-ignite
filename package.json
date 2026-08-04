@@ -24,12 +24,12 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@actions/github": "^9.0.0",
-    "@actions/http-client": "^4.0.1"
+    "@actions/github": "^8.0.0",
+    "@actions/http-client": "^2.2.3"
   },
   "devDependencies": {
-    "@types/node": "^26.0.0",
-    "@vercel/ncc": "^0.44.1",
+    "@types/node": "^22.0.0",
+    "@vercel/ncc": "^0.38.4",
     "typescript": "^5.3.3",
     "vitest": "^4.1.10"
   },

@@ -62,7 +62,7 @@ export async function fetchAllContributions(
   const PARALLEL_THRESHOLD = 4;
 
   if (ranges.length <= PARALLEL_THRESHOLD) {
-    const response = await Promise.all(
+    const response: ContributionsResponse[] = await Promise.all(
       ranges.map((range) =>
         octokit.graphql<ContributionsResponse>(FETCH_CONTRIBUTIONS_QUERY, {
           login: username,

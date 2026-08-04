@@ -276,7 +276,7 @@ git-ignite/
 
 ### Requirements
 
-- Node.js 26+
+- Node.js 22+
 - npm
 
 ### Commands
