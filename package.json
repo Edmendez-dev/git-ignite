@@ -7,7 +7,7 @@
     "build": "ncc build src/index.ts -o dist --source-map --license ncc.LICENSE",
     "format": "prettier --write '**/*.ts'",
     "lint": "eslint src/**/*.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.0.0",
-    "@vercel/ncc": "^0.38.4",
+    "@vercel/ncc": "^0.44.1",
     "typescript": "^5.3.3",
     "vitest": "^4.1.10"
   },

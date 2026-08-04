@@ -276,7 +276,7 @@ git-ignite/
 
 ### Requirements
 
-- Node.js 20+
+- Node.js 26+
 - npm
 
 ### Commands
@@ -286,6 +286,12 @@ npm install
 npm run build
 npm run format
 npm run lint
+```
+
+### Testing
+
+```bash
+npm run test
 ```
 
 ## Contributing
