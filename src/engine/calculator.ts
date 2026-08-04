@@ -17,17 +17,21 @@ export function calculateStreak(
 
   // Streak logic with "Grace Day"
   let startIndex = 0;
-  if (
-    allDays[0]?.date === todayDateStr &&
-    allDays[0]?.contributionCount === 0
-  ) {
+  let graceUsed = false;
+  if (allDays[0]?.date === todayDateStr) {
     startIndex = 1;
   }
 
-  for (let i = startIndex; i < allDays.length; i++) {
-    if (allDays[i].contributionCount > 0) {
+  while (startIndex < allDays.length) {
+    if (allDays[startIndex].contributionCount > 0) {
       currentStreak++;
+      startIndex++;
+    } else if (!graceUsed) {
+      // First zero completed-day: forgive it once, don't break, don't count it
+      graceUsed = true;
+      startIndex++;
     } else {
+      // Second zero completed-day in a row: streak truly broken
       break;
     }
   }
@@ -45,7 +49,7 @@ export function calculateStreak(
     level = 1; // Spark
   else level = 0; // No contributions or Inactive
 
-  // Tier Logic
+  // Tier Logic - based on current streak length
   if (currentStreak > 90) {
     tier = "overload";
   } else if (currentStreak >= 30) {

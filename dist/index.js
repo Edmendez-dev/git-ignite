@@ -31301,15 +31301,22 @@ function calculateStreak(calendar) {
     const todayDateStr = new Date().toISOString().split("T")[0];
     // Streak logic with "Grace Day"
     let startIndex = 0;
-    if (allDays[0]?.date === todayDateStr &&
-        allDays[0]?.contributionCount === 0) {
+    let graceUsed = false;
+    if (allDays[0]?.date === todayDateStr) {
         startIndex = 1;
     }
-    for (let i = startIndex; i < allDays.length; i++) {
-        if (allDays[i].contributionCount > 0) {
+    while (startIndex < allDays.length) {
+        if (allDays[startIndex].contributionCount > 0) {
             currentStreak++;
+            startIndex++;
+        }
+        else if (!graceUsed) {
+            // First zero completed-day: forgive it once, don't break, don't count it
+            graceUsed = true;
+            startIndex++;
         }
         else {
+            // Second zero completed-day in a row: streak truly broken
             break;
         }
     }
@@ -31325,7 +31332,7 @@ function calculateStreak(calendar) {
         level = 1; // Spark
     else
         level = 0; // No contributions or Inactive
-    // Tier Logic
+    // Tier Logic - based on current streak length
     if (currentStreak > 90) {
         tier = "overload";
     }
@@ -32208,20 +32215,20 @@ function generateSVG(stats, theme) {
     let containerFilter = `drop-shadow(0 0 6px ${tierColors.base})`;
     let containerOpacity = "1";
     let glowAnimation = "none";
-    if (level >= 3) {
+    if (currentStreak === 0) {
+        animDuration = "2.4s";
+        containerFilter = "grayscale(100%)";
+        containerOpacity = "0.3";
+    }
+    else if (level >= 3) {
         animDuration = "0.8s";
         containerFilter = `drop-shadow(0 0 12px ${tierColors.base}) drop-shadow(0 0 25px ${tierColors.middle})`;
         glowAnimation = "beast-glow 1.5s infinite ease-in-out";
     }
-    else if (level === 2) {
+    else if (level >= 1) {
         animDuration = "1.2s";
         containerFilter = `drop-shadow(0 0 10px ${tierColors.base})`;
         glowAnimation = "steady-burn 2s infinite ease-in-out";
-    }
-    else if (level === 0) {
-        animDuration = "2.4s";
-        containerFilter = "grayscale(100%)";
-        containerOpacity = "0.3";
     }
     const durationSec = parseFloat(animDuration);
     const stepTime = durationSec / 16;
