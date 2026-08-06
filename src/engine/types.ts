@@ -31,6 +31,10 @@ export interface fetchUserStatsResponse {
   };
 }
 
+export interface gitigniteMeta {
+  firstRunDate: string;
+}
+
 export interface StreakStats {
   currentStreak: number;
   todayPoints: number;

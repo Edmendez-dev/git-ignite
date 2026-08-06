@@ -6,6 +6,7 @@ import {
 
 export function calculateStreak(
   calendar: RawContributionCalendar,
+  minDate: string | null = null,
 ): StreakStats {
   const allDays: RawContributionDay[] = calendar.weeks
     .flatMap((week) => week.contributionDays)
@@ -23,7 +24,11 @@ export function calculateStreak(
   }
 
   while (startIndex < allDays.length) {
-    if (allDays[startIndex].contributionCount > 0) {
+    const day = allDays[startIndex];
+
+    if (minDate && day.date < minDate) break;
+
+    if (day.contributionCount > 0) {
       currentStreak++;
       startIndex++;
     } else if (!graceUsed) {

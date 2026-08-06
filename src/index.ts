@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as fs from "fs";
 import * as path from "path";
-import { fetchUserStats } from "./engine/github";
+import { fetchUserStats, getOrInitFirstRunDate } from "./engine/github";
 import { fetchLanguageStats } from "./engine/languages";
 import { calculateStreak } from "./engine/calculator";
 import { generateSVG } from "./renderer/streak-builder";
@@ -30,8 +30,10 @@ async function run() {
       fetchLanguageStats(username, token),
     ]);
 
+    const firstRunDate = getOrInitFirstRunDate();
+
     // Calculate streak stats
-    const streakStats = calculateStreak(calendarData);
+    const streakStats = calculateStreak(calendarData, firstRunDate);
     core.info(`Current streak: ${streakStats.currentStreak}`);
     core.info(`Today's points: ${streakStats.todayPoints}`);
     core.info(`Level: ${streakStats.level}`);
