@@ -33,6 +33,10 @@ It's ideal for profile READMEs, personal repositories, or dashboards based on Gi
 - Lightweight, embeddable animated SVGs in the README.
 - Simple integration into existing workflows.
 
+### Streak Card Description
+
+![Description GitIgnite](./assets/gitignite_description.png)
+
 ## Themes
 
 GitIgnite includes six themes designed for different personal branding styles:
