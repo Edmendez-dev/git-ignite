@@ -33,6 +33,10 @@ It's ideal for profile READMEs, personal repositories, or dashboards based on Gi
 - Lightweight, embeddable animated SVGs in the README.
 - Simple integration into existing workflows.
 
+### Streak Card Description
+
+![Description GitIgnite](./assets/gitignite_description.png)
+
 ## Themes
 
 GitIgnite includes six themes designed for different personal branding styles:
@@ -276,7 +280,7 @@ git-ignite/
 
 ### Requirements
 
-- Node.js 20+
+- Node.js 22+
 - npm
 
 ### Commands
@@ -286,6 +290,12 @@ npm install
 npm run build
 npm run format
 npm run lint
+```
+
+### Testing
+
+```bash
+npm run test
 ```
 
 ## Contributing

@@ -6,6 +6,7 @@ import {
   RawContributionCalendar,
   YearCache,
   fetchUserStatsResponse,
+  gitigniteMeta,
 } from "./types";
 
 export const FETCH_USER_CREATED_QUERY = `
@@ -34,6 +35,7 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
 }`;
 
 const CACHE_FILE = path.join(process.cwd(), ".gitignite-cache", "years.json");
+const META_FILE = path.join(process.cwd(), "gitignite-cache", "meta.json");
 
 function loadYearCache(): YearCache {
   if (!fs.existsSync(CACHE_FILE)) return {};
@@ -45,10 +47,35 @@ function loadYearCache(): YearCache {
   }
 }
 
+function loadMeta(): gitigniteMeta | null {
+  if (!fs.existsSync(META_FILE)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(META_FILE, "utf-8"));
+  } catch (error) {
+    console.error("Error parsing meta file:", error);
+    return null;
+  }
+}
+
 function saveYearCache(cache: YearCache) {
   const dir = path.dirname(CACHE_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(CACHE_FILE, JSON.stringify(cache));
+}
+
+function saveMeta(meta: gitigniteMeta) {
+  const dir = path.dirname(META_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(META_FILE, JSON.stringify(meta));
+}
+
+export function getOrInitFirstRunDate(): string {
+  const existing = loadMeta();
+  if (existing?.firstRunDate) return existing.firstRunDate;
+
+  const today = new Date().toISOString().split("T")[0];
+  saveMeta({ firstRunDate: today });
+  return today;
 }
 
 export async function fetchAllContributions(
@@ -62,7 +89,7 @@ export async function fetchAllContributions(
   const PARALLEL_THRESHOLD = 4;
 
   if (ranges.length <= PARALLEL_THRESHOLD) {
-    const response = await Promise.all(
+    const response: ContributionsResponse[] = await Promise.all(
       ranges.map((range) =>
         octokit.graphql<ContributionsResponse>(FETCH_CONTRIBUTIONS_QUERY, {
           login: username,

@@ -37,18 +37,18 @@ export function generateSVG(stats: StreakStats, theme: Theme): string {
   let containerOpacity = "1";
   let glowAnimation = "none";
 
-  if (level >= 3) {
-    animDuration = "0.8s";
-    containerFilter = `drop-shadow(0 0 12px ${tierColors.base}) drop-shadow(0 0 25px ${tierColors.middle})`;
-    glowAnimation = "beast-glow 1.5s infinite ease-in-out";
-  } else if (level === 2) {
-    animDuration = "1.2s";
-    containerFilter = `drop-shadow(0 0 10px ${tierColors.base})`;
-    glowAnimation = "steady-burn 2s infinite ease-in-out";
-  } else if (level === 0) {
+  if (currentStreak === 0) {
     animDuration = "2.4s";
     containerFilter = "grayscale(100%)";
     containerOpacity = "0.3";
+  } else if (level >= 3) {
+    animDuration = "0.8s";
+    containerFilter = `drop-shadow(0 0 12px ${tierColors.base}) drop-shadow(0 0 25px ${tierColors.middle})`;
+    glowAnimation = "beast-glow 1.5s infinite ease-in-out";
+  } else if (level >= 1) {
+    animDuration = "1.2s";
+    containerFilter = `drop-shadow(0 0 10px ${tierColors.base})`;
+    glowAnimation = "steady-burn 2s infinite ease-in-out";
   }
 
   const durationSec = parseFloat(animDuration);
