@@ -32420,7 +32420,7 @@ module.exports = {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.calculateStreak = calculateStreak;
-function calculateStreak(calendar) {
+function calculateStreak(calendar, minDate = null) {
     const allDays = calendar.weeks
         .flatMap((week) => week.contributionDays)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -32434,7 +32434,10 @@ function calculateStreak(calendar) {
         startIndex = 1;
     }
     while (startIndex < allDays.length) {
-        if (allDays[startIndex].contributionCount > 0) {
+        const day = allDays[startIndex];
+        if (minDate && day.date < minDate)
+            break;
+        if (day.contributionCount > 0) {
             currentStreak++;
             startIndex++;
         }
@@ -32527,6 +32530,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FETCH_CONTRIBUTIONS_QUERY = exports.FETCH_USER_CREATED_QUERY = void 0;
+exports.getOrInitFirstRunDate = getOrInitFirstRunDate;
 exports.fetchAllContributions = fetchAllContributions;
 exports.fetchUserStats = fetchUserStats;
 const fs = __importStar(__nccwpck_require__(9896));
@@ -32556,6 +32560,7 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
     }
 }`;
 const CACHE_FILE = path.join(process.cwd(), ".gitignite-cache", "years.json");
+const META_FILE = path.join(process.cwd(), "gitignite-cache", "meta.json");
 function loadYearCache() {
     if (!fs.existsSync(CACHE_FILE))
         return {};
@@ -32567,11 +32572,36 @@ function loadYearCache() {
         return {};
     }
 }
+function loadMeta() {
+    if (!fs.existsSync(META_FILE))
+        return null;
+    try {
+        return JSON.parse(fs.readFileSync(META_FILE, "utf-8"));
+    }
+    catch (error) {
+        console.error("Error parsing meta file:", error);
+        return null;
+    }
+}
 function saveYearCache(cache) {
     const dir = path.dirname(CACHE_FILE);
     if (!fs.existsSync(dir))
         fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(CACHE_FILE, JSON.stringify(cache));
+}
+function saveMeta(meta) {
+    const dir = path.dirname(META_FILE);
+    if (!fs.existsSync(dir))
+        fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(META_FILE, JSON.stringify(meta));
+}
+function getOrInitFirstRunDate() {
+    const existing = loadMeta();
+    if (existing?.firstRunDate)
+        return existing.firstRunDate;
+    const today = new Date().toISOString().split("T")[0];
+    saveMeta({ firstRunDate: today });
+    return today;
 }
 async function fetchAllContributions(octokit, username, ranges) {
     const results = new Map();
@@ -32809,8 +32839,9 @@ async function run() {
             (0, github_1.fetchUserStats)(username, token),
             (0, languages_1.fetchLanguageStats)(username, token),
         ]);
+        const firstRunDate = (0, github_1.getOrInitFirstRunDate)();
         // Calculate streak stats
-        const streakStats = (0, calculator_1.calculateStreak)(calendarData);
+        const streakStats = (0, calculator_1.calculateStreak)(calendarData, firstRunDate);
         core.info(`Current streak: ${streakStats.currentStreak}`);
         core.info(`Today's points: ${streakStats.todayPoints}`);
         core.info(`Level: ${streakStats.level}`);
