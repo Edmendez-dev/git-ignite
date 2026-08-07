@@ -32840,6 +32840,7 @@ async function run() {
             (0, languages_1.fetchLanguageStats)(username, token),
         ]);
         const firstRunDate = (0, github_1.getOrInitFirstRunDate)();
+        core.info(`First run date: ${firstRunDate}`);
         // Calculate streak stats
         const streakStats = (0, calculator_1.calculateStreak)(calendarData, firstRunDate);
         core.info(`Current streak: ${streakStats.currentStreak}`);
