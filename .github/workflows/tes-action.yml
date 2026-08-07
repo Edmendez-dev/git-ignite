@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - fix/streak-logic
+      - fix/no-streak-update
 
 jobs:
   test:
@@ -16,9 +16,9 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .gitignite-cache
-          key: gitignite-test-years-v5-${{ github.run_id }}
+          key: gitignite-test-years-v6-${{ github.run_id }}
           restore-keys: |
-            gitignite-test-years-v5-
+            gitignite-test-years-v6-
 
       - name: Run GitIgnite (local build)
         uses: ./
@@ -39,4 +39,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: .gitignite-cache
-          key: gitignite-test-years-v5-${{ github.run_id }}
+          key: gitignite-test-years-v6-${{ github.run_id }}

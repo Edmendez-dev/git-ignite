@@ -31,6 +31,7 @@ async function run() {
     ]);
 
     const firstRunDate = getOrInitFirstRunDate();
+    core.info(`First run date: ${firstRunDate}`);
 
     // Calculate streak stats
     const streakStats = calculateStreak(calendarData, firstRunDate);

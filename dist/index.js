@@ -32560,7 +32560,7 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
     }
 }`;
 const CACHE_FILE = path.join(process.cwd(), ".gitignite-cache", "years.json");
-const META_FILE = path.join(process.cwd(), "gitignite-cache", "meta.json");
+const META_FILE = path.join(process.cwd(), ".gitignite-cache", "meta.json");
 function loadYearCache() {
     if (!fs.existsSync(CACHE_FILE))
         return {};
@@ -32840,6 +32840,7 @@ async function run() {
             (0, languages_1.fetchLanguageStats)(username, token),
         ]);
         const firstRunDate = (0, github_1.getOrInitFirstRunDate)();
+        core.info(`First run date: ${firstRunDate}`);
         // Calculate streak stats
         const streakStats = (0, calculator_1.calculateStreak)(calendarData, firstRunDate);
         core.info(`Current streak: ${streakStats.currentStreak}`);

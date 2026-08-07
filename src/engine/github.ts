@@ -35,7 +35,7 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
 }`;
 
 const CACHE_FILE = path.join(process.cwd(), ".gitignite-cache", "years.json");
-const META_FILE = path.join(process.cwd(), "gitignite-cache", "meta.json");
+const META_FILE = path.join(process.cwd(), ".gitignite-cache", "meta.json");
 
 function loadYearCache(): YearCache {
   if (!fs.existsSync(CACHE_FILE)) return {};
