@@ -144,7 +144,8 @@ name: GitIgnite Profile Stats
 
 on:
   schedule:
-    - cron: "0 */12 * * *" # It is updated every 12 hours
+    - cron: "0 12 * * *" # UTC midday
+    - cron: "55 23 * * *" # UTC day end
   workflow_dispatch: # You can also run it manually
 
 permissions:
@@ -190,6 +191,15 @@ jobs:
 ```
 
 > 💡 This workflow **never touches `main`** — it only reads from and writes to the `gitignite-output` branch. Furthermore, instead of creating a new commit each time it runs, it rewrites the same commit (`--amend --no-edit`), so even if it runs several times a day, your history won't be filled with duplicate commits.
+
+> 💡 **GitIgnite** runs twice a day, and both times are in **UTC**, not your local time:
+>
+> - `0 12 * * *` — noon UTC, just to refresh the card during the day.
+> - `55 23 * * *` — 23:55 UTC, the run that really matters: it runs just before the day changes in UTC, capturing all your activity for the day before calculating your streak.
+>
+> This is important because **GitHub records contributions in UTC**, not your time zone. If your workflow ran very early in your day (e.g., 7 AM local time), it could calculate your streak _before_ you made your commits for the day, giving you a false "lost day." Running near the end of the UTC day avoids that problem.
+>
+> You can adjust `0 12` to your preferred time for the midday refresh — but **don't move** `55 23`, or the streak calculation could be affected depending on your time zone.
 
 #### 6. Run the workflow for the first time
 
